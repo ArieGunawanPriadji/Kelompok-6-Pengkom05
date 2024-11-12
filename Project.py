@@ -24,10 +24,10 @@ def calculate_toll(entry, exit, vehicle_type):
     }
     route = (entry, exit)
     if route in toll_routes:
-        return toll_routes[route].get(vehicle_type, 5.0)
+        return toll_routes[route].get(vehicle_type,)
     else:
         route = (exit, entry)
-        return toll_routes.get(route, {}).get(vehicle_type, 5.0)
+        return toll_routes.get(route, {}).get(vehicle_type,)
 
 def process_vehicle(vehicle, entry, exit):
     if vehicle["has_pass"]:
