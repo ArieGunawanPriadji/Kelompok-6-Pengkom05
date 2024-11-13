@@ -1,80 +1,102 @@
-import time
-
-def create_vehicle(vehicle_id, vehicle_type, balance=0,has_pass=False):
+# fungsi "kendaraan" membuat dictionary berisi data kendaraan: plat nomor, jenis kendaraan, saldo awal, dan pintu masuk
+def kendaraan(plat_nomor, jenis_kendaraan, saldo=0, masuk=None):
     return {
-        "vehicle_id": vehicle_id,
-        "vehicle_type": vehicle_type,
-        "balance": balance,
-        "has_pass": has_pass
+        "plat_nomor": plat_nomor,
+        "jenis_kendaraan": jenis_kendaraan,
+        "saldo": saldo,
+        "masuk": masuk
     }
 
-def deduct_balance(vehicle, amount):
-    if vehicle["balance"] >= amount:
-        vehicle["balance"] -= amount
+# fungsi "saldo_akhir" mengecek apakah saldo kendaraan mencukupi untuk membayar tarif tol.
+def saldo_akhir(kendaraan, tarif):
+    if kendaraan["saldo"] >= tarif:
+        kendaraan["saldo"] -= tarif
         return True
     else:
         return False
 
-def calculate_toll(entry, exit, vehicle_type): #6 rute dan 4 rute putar balik
-    toll_routes = {
+# fungsi "hitung_tarif" akan menghitung tarif tol yang perlu dibayar pengguna kendaraan
+def hitung_tarif(masuk, keluar, jenis_kendaraan):
+    rute_tol = {
         ("Kopo", "Toha"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Kopo", "Buahbatu"): {"mobil": 5500, "truk": 11000, "bus":  8250},
+        ("Kopo", "Buahbatu"): {"mobil": 5500, "truk": 11000, "bus": 8250},
         ("Kopo", "Cileunyi"): {"mobil": 6500, "truk": 13000, "bus": 9750},
         ("Toha", "Buahbatu"): {"mobil": 2500, "truk": 5000, "bus": 3750},
         ("Toha", "Cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Buahbatu", "Cileunyi"): {"mobil":5500, "truk": 11000, "bus":  8250},
-        
-        ("Kopo", "Kopo"): {"mobil": 13000, "truk": 26000 , "bus":  19500  },
-        ("Toha", "Toha"): {"mobil": 13000, "truk": 26000 , "bus":  19500  },
-        ("Buahbatu", "Buahbatu"): {"mobil": 13000, "truk": 26000 , "bus": 19500   },
-        ("Cileunyi", "Cileunyi"): {"mobil": 13000, "truk": 26000 , "bus":   19500 },
+        ("Buahbatu", "Cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("Kopo", "Kopo"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("Toha", "Toha"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("Buahbatu", "Buahbatu"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("Cileunyi", "Cileunyi"): {"mobil": 13000, "truk": 26000, "bus": 19500}
     }
-    route = (entry, exit)
-    if route in toll_routes:
-        return toll_routes[route].get(vehicle_type,)
+    rute = (masuk, keluar)
+    if rute in rute_tol:
+        return rute_tol[rute].get(jenis_kendaraan)
     else:
-        route = (exit, entry)
-        return toll_routes.get(route, {}).get(vehicle_type,)
+        rute = (keluar, masuk)
+        return rute_tol.get(rute, {}).get(jenis_kendaraan)
 
-def process_vehicle(vehicle, entry, exit):
-    if vehicle["has_pass"]:
-        print(f"Vehicle {vehicle['vehicle_id']} with a pass: Toll waived.")
+# fungsi "gerbang_keluar" dipakai ketika kendaraan keluar dari tol
+def gerbang_keluar(kendaraan, keluar):
+    tarif_tol = hitung_tarif(kendaraan["masuk"], keluar, kendaraan["jenis_kendaraan"])
+    if tarif_tol is None:
+        print(f"Rute dari {kendaraan['masuk']} ke {keluar} tidak tersedia.")
+        return False
+    if saldo_akhir(kendaraan, tarif_tol):
+        print(f"Kendaraan {kendaraan['plat_nomor']} saldo dipotong sebesar {tarif_tol}, rute yang dilalui {kendaraan['masuk']} - {keluar}. Sisa saldo: {kendaraan['saldo']}")
+        print("Gerbang Terbuka")
         return True
     else:
-        toll_amount = calculate_toll(entry, exit, vehicle["vehicle_type"])
-        if deduct_balance(vehicle, toll_amount):
-            print(f"Vehicle {vehicle['vehicle_id']} charged {toll_amount} for route {entry} to {exit}. Remaining balance: {vehicle['balance']}")
-            return True
-        else:
-            print(f"Vehicle {vehicle['vehicle_id']} does not have enough balance for route {entry} to {exit}.")
-            return False
+        print(f"Kendaraan {kendaraan['plat_nomor']} tidak memiliki saldo yang cukup untuk melalui rute {kendaraan['masuk']} - {keluar}.")
+        print(f"Silahkan lakukan pembayaran manual senilai {tarif_tol}")
+        return False
 
-def add_vehicle():
-    vehicle_id = input("Masukkan plat nomor kendaraan: ")
-    vehicle_type = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
-    balance = float(input("Masukkan saldo kartu etoll kendaraan: "))
-    has_pass = input("Does the vehicle have a toll pass? (yes/no): ").strip().lower() == 'yes'
-    return create_vehicle(vehicle_id, vehicle_type, balance, has_pass)
+# Fungsi "tambah_kendaraan" meminta pengguna untuk memasukkan informasi kendaraan.
+def tambah_kendaraan():
+    plat_nomor = input("Masukkan Plat Nomor: ")
+    jenis_kendaraan = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
+    saldo = float(input("Masukkan saldo kendaraan: "))
+    masuk = input("Masukkan gerbang masuk kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ")
+    return kendaraan(plat_nomor, jenis_kendaraan, saldo, masuk)
 
 def main():
-    vehicle_db = []
+    # kendaraan_list adalah list untuk menyimpan data semua kendaraan yang ditambahkan.
+    kendaraan_list = []
 
-    # Add vehicles to the system
+    # Menambahkan data kendaraan ke dalam sistem
     while True:
-        add_another = input("Do you want to add a new vehicle? (yes/no): ").strip().lower()
-        if add_another == 'yes':
-            vehicle = add_vehicle()
-            vehicle_db.append(vehicle)
+        tambah_lagi = input("Tambah kendaraan lain? (ya/tidak): ").strip().lower()
+        if tambah_lagi == 'ya':
+            kdr = tambah_kendaraan()
+            kendaraan_list.append(kdr)
         else:
             break
 
-    # Process each vehicle through the toll gate with entry and exit points
-    for vehicle in vehicle_db:
-        print(f"\nProcessing vehicle {vehicle['vehicle_id']}...")
-        entry = input(f"Enter entry gate for vehicle {vehicle['vehicle_id']} (e.g., Kopo, Toha, Buahbatu,Cileunyi): ").strip().upper()
-        exit = input(f"Enter exit gate for vehicle {vehicle['vehicle_id']} (e.g., Kopo, Toha, Buahbatu,Cileunyi): ").strip().upper()
-        process_vehicle(vehicle, entry, exit)
-        time.sleep(1)  # Pause for readability
+    # Memilih kendaraan dengan plat nomor untuk diproses saat kendaraan hendak keluar tol
+    while True:
+        print("\nDaftar kendaraan:")
+        for kdr in kendaraan_list:
+            print(f"Plat Nomor: {kdr['plat_nomor']}, Jenis: {kdr['jenis_kendaraan']}, Saldo: {kdr['saldo']}, Gerbang Masuk: {kdr['masuk']}")
+
+        plat_nomor = input("Masukkan plat nomor kendaraan yang ingin diproses: ").strip()
+        
+        # Mencari kendaraan berdasarkan plat nomor
+        kendaraan_dipilih = None
+        for k in kendaraan_list:
+            if k["plat_nomor"] == plat_nomor:
+                kendaraan_dipilih = k
+                break
+        
+        # kendaraan terpilih akan diproses di gerbang keluar
+        if kendaraan_dipilih:
+            keluar = input("Masukkan gerbang keluar kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ")
+            gerbang_keluar(kendaraan_dipilih, keluar)
+        else:
+            print("Plat nomor tidak ditemukan dalam daftar kendaraan.")
+
+        lanjut = input("Apakah Anda ingin memproses kendaraan lain? (ya/tidak): ").strip().lower()
+        if lanjut != 'ya':
+            break
 
 if __name__ == "__main__":
     main()
