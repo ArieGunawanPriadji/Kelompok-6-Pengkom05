@@ -1,6 +1,6 @@
 import time
 
-def create_vehicle(vehicle_id, vehicle_type, balance=0):
+def create_vehicle(vehicle_id, vehicle_type, balance=0,has_pass=False):
     return {
         "vehicle_id": vehicle_id,
         "vehicle_type": vehicle_type,
@@ -52,7 +52,7 @@ def process_vehicle(vehicle, entry, exit):
 def add_vehicle():
     vehicle_id = input("Masukkan plat nomor kendaraan: ")
     vehicle_type = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
-    balance = float(input("Enter vehicle balance: "))
+    balance = float(input("Masukkan saldo kartu etoll kendaraan: "))
     has_pass = input("Does the vehicle have a toll pass? (yes/no): ").strip().lower() == 'yes'
     return create_vehicle(vehicle_id, vehicle_type, balance, has_pass)
 
