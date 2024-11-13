@@ -37,6 +37,11 @@ def hitung_tarif(masuk, keluar, jenis_kendaraan):
         return rute_tol.get(rute, {}).get(jenis_kendaraan)
 
 # fungsi "gerbang_keluar" dipakai ketika kendaraan keluar dari tol
+# fungsi ini memproses:
+# Menghitung tarif tol berdasarkan gerbang masuk, keluar, dan jenis kendaraan.
+# Memanggil saldo_akhir untuk mengecek dan memotong saldo jika mencukupi.
+# Jika saldo cukup, saldo akan dipotong, dan gerbang otomatis terbuka.
+# Jika saldo tidak mencukupi, pesan bahwa saldo tidak cukup akan ditampilkan, beserta jumlah tarif untuk pembayaran manual.
 def gerbang_keluar(kendaraan, keluar):
     tarif_tol = hitung_tarif(kendaraan["masuk"], keluar, kendaraan["jenis_kendaraan"])
     if tarif_tol is None:
