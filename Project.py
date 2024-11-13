@@ -1,11 +1,10 @@
 import time
 
-def create_vehicle(vehicle_id, vehicle_type, balance=0, has_pass=False):
+def create_vehicle(vehicle_id, vehicle_type, balance=0):
     return {
         "vehicle_id": vehicle_id,
         "vehicle_type": vehicle_type,
         "balance": balance,
-        "has_pass": has_pass
     }
 
 def deduct_balance(vehicle, amount):
@@ -15,12 +14,19 @@ def deduct_balance(vehicle, amount):
     else:
         return False
 
-def calculate_toll(entry, exit, vehicle_type):
+def calculate_toll(entry, exit, vehicle_type): #6 rute dan 4 rute putar balik
     toll_routes = {
-        ("B", "A"): {"car": 3.0, "truck": 6.0, "motorcycle": 1.5, "bus": 5.0},
-        ("A", "C"): {"car": 4.0, "truck": 8.0, "motorcycle": 2.0, "bus": 6.5},
-        ("B", "C"): {"car": 2.5, "truck": 5.0, "motorcycle": 1.0, "bus": 4.0},
-        ("A", "A"): {"car": 8}
+        ("Kopo", "Toha"): {"car": 3.0, "truck": 6.0, "bus": 5.0},
+        ("Kopo", "Buahbatu"): {"car": 4.0, "truck": 8.0, "bus": 6.5},
+        ("Kopo", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
+        ("Toha", "Buahbatu"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
+        ("Toha", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
+        ("Buahbatu", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
+        
+        ("Kopo", "Kopo"): {"car": 8, "truck":  , "bus":    },
+        ("Toha", "Toha"): {"car": 8, "truck":  , "bus":    },
+        ("Buahbatu", "Buahbatu"): {"car": 8, "truck":  , "bus":    },
+        ("Cileunyi", "Cileunyi"): {"car": 8, "truck":  , "bus":    },
     }
     route = (entry, exit)
     if route in toll_routes:
