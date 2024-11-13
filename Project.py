@@ -16,17 +16,17 @@ def deduct_balance(vehicle, amount):
 
 def calculate_toll(entry, exit, vehicle_type): #6 rute dan 4 rute putar balik
     toll_routes = {
-        ("Kopo", "Toha"): {"car": 3.0, "truck": 6.0, "bus": 5.0},
-        ("Kopo", "Buahbatu"): {"car": 4.0, "truck": 8.0, "bus": 6.5},
-        ("Kopo", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
-        ("Toha", "Buahbatu"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
-        ("Toha", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
-        ("Buahbatu", "Cileunyi"): {"car": 2.5, "truck": 5.0, "bus": 4.0},
+        ("Kopo", "Toha"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("Kopo", "Buahbatu"): {"mobil": 5500, "truk": 11000, "bus":  8250},
+        ("Kopo", "Cileunyi"): {"mobil": 6500, "truk": 13000, "bus": 9750},
+        ("Toha", "Buahbatu"): {"mobil": 2500, "truk": 5000, "bus": 3750},
+        ("Toha", "Cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("Buahbatu", "Cileunyi"): {"mobil":5500, "truk": 11000, "bus":  8250},
         
-        ("Kopo", "Kopo"): {"car": 8, "truck":  , "bus":    },
-        ("Toha", "Toha"): {"car": 8, "truck":  , "bus":    },
-        ("Buahbatu", "Buahbatu"): {"car": 8, "truck":  , "bus":    },
-        ("Cileunyi", "Cileunyi"): {"car": 8, "truck":  , "bus":    },
+        ("Kopo", "Kopo"): {"mobil": 13000, "truk": 26000 , "bus":  19500  },
+        ("Toha", "Toha"): {"mobil": 13000, "truk": 26000 , "bus":  19500  },
+        ("Buahbatu", "Buahbatu"): {"mobil": 13000, "truk": 26000 , "bus": 19500   },
+        ("Cileunyi", "Cileunyi"): {"mobil": 13000, "truk": 26000 , "bus":   19500 },
     }
     route = (entry, exit)
     if route in toll_routes:
@@ -49,8 +49,8 @@ def process_vehicle(vehicle, entry, exit):
             return False
 
 def add_vehicle():
-    vehicle_id = input("Enter vehicle ID: ")
-    vehicle_type = input("Enter vehicle type (car, truck, motorcycle, bus): ").lower()
+    vehicle_id = input("Masukkan plat nomor kendaraan: ")
+    vehicle_type = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
     balance = float(input("Enter vehicle balance: "))
     has_pass = input("Does the vehicle have a toll pass? (yes/no): ").strip().lower() == 'yes'
     return create_vehicle(vehicle_id, vehicle_type, balance, has_pass)
@@ -70,8 +70,8 @@ def main():
     # Process each vehicle through the toll gate with entry and exit points
     for vehicle in vehicle_db:
         print(f"\nProcessing vehicle {vehicle['vehicle_id']}...")
-        entry = input(f"Enter entry gate for vehicle {vehicle['vehicle_id']} (e.g., A, B, C): ").strip().upper()
-        exit = input(f"Enter exit gate for vehicle {vehicle['vehicle_id']} (e.g., A, B, C): ").strip().upper()
+        entry = input(f"Enter entry gate for vehicle {vehicle['vehicle_id']} (e.g., Kopo, Toha, Buahbatu,Cileunyi): ").strip().upper()
+        exit = input(f"Enter exit gate for vehicle {vehicle['vehicle_id']} (e.g., Kopo, Toha, Buahbatu,Cileunyi): ").strip().upper()
         process_vehicle(vehicle, entry, exit)
         time.sleep(1)  # Pause for readability
 
