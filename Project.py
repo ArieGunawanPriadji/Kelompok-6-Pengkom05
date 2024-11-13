@@ -5,6 +5,7 @@ def create_vehicle(vehicle_id, vehicle_type, balance=0):
         "vehicle_id": vehicle_id,
         "vehicle_type": vehicle_type,
         "balance": balance,
+        "has_pass": has_pass
     }
 
 def deduct_balance(vehicle, amount):
