@@ -18,16 +18,16 @@ def saldo_akhir(kendaraan, tarif):
 # fungsi "hitung_tarif" akan menghitung tarif tol yang perlu dibayar pengguna kendaraan
 def hitung_tarif(masuk, keluar, jenis_kendaraan):
     rute_tol = {
-        ("Kopo", "Toha"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Kopo", "Buahbatu"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Kopo", "Cileunyi"): {"mobil": 6500, "truk": 13000, "bus": 9750},
-        ("Toha", "Buahbatu"): {"mobil": 2500, "truk": 5000, "bus": 3750},
-        ("Toha", "Cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Buahbatu", "Cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("Kopo", "Kopo"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("Toha", "Toha"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("Buahbatu", "Buahbatu"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("Cileunyi", "Cileunyi"): {"mobil": 13000, "truk": 26000, "bus": 19500}
+        ("kopo", "toha"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("kopo", "buahbatu"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("kopo", "cileunyi"): {"mobil": 6500, "truk": 13000, "bus": 9750},
+        ("toha", "buahbatu"): {"mobil": 2500, "truk": 5000, "bus": 3750},
+        ("toha", "cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("buahbatu", "cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
+        ("kopo", "kopo"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("toha", "toha"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("buahbatu", "buahbatu"): {"mobil": 13000, "truk": 26000, "bus": 19500},
+        ("cileunyi", "cileunyi"): {"mobil": 13000, "truk": 26000, "bus": 19500}
     }
     rute = (masuk, keluar)
     if rute in rute_tol:
@@ -61,7 +61,7 @@ def tambah_kendaraan():
     plat_nomor = input("Masukkan Plat Nomor: ")
     jenis_kendaraan = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
     saldo = float(input("Masukkan saldo kendaraan: "))
-    masuk = input("Masukkan gerbang masuk kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ")
+    masuk = input("Masukkan gerbang masuk kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ").lower()
     return kendaraan(plat_nomor, jenis_kendaraan, saldo, masuk)
 
 def main():
