@@ -1,3 +1,6 @@
+import os
+import time 
+
 # fungsi "kendaraan" membuat dictionary berisi data kendaraan: plat nomor, jenis kendaraan, saldo awal, dan pintu masuk
 def kendaraan(plat_nomor, jenis_kendaraan, saldo=0, masuk=None):
     return {
@@ -48,12 +51,19 @@ def gerbang_keluar(kendaraan, keluar):
         print(f"Rute dari {kendaraan['masuk']} ke {keluar} tidak tersedia.")
         return False
     if saldo_akhir(kendaraan, tarif_tol):
-        print(f"Kendaraan {kendaraan['plat_nomor']} saldo dipotong sebesar {tarif_tol}, rute yang dilalui {kendaraan['masuk']} - {keluar}. Sisa saldo: {kendaraan['saldo']}")
+        print(f"Saldo kendaraan {kendaraan['plat_nomor']} dipotong sebesar {tarif_tol}, rute yang dilalui {kendaraan['masuk']} - {keluar}. Sisa saldo: {kendaraan['saldo']}")
+        time.sleep(1)
         print("Gerbang Terbuka")
         return True
     else:
+        os.system('cls' if os.name == 'nt' else 'clear')
         print(f"Kendaraan {kendaraan['plat_nomor']} tidak memiliki saldo yang cukup untuk melalui rute {kendaraan['masuk']} - {keluar}.")
+        time.sleep(1)
         print(f"Silahkan lakukan pembayaran manual senilai {tarif_tol}")
+        time.sleep(1)
+        input("Tekan Enter jika pembayaran berhasil")
+        print("Pembayaran manual berhasil!")
+        print("Gerbang Terbuka")
         return False
 
 # Fungsi "tambah_kendaraan" meminta pengguna untuk memasukkan informasi kendaraan.
