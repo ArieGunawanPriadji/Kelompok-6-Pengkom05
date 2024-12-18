@@ -21,16 +21,27 @@ def saldo_akhir(kendaraan, tarif):
 # fungsi "hitung_tarif" akan menghitung tarif tol yang perlu dibayar pengguna kendaraan
 def hitung_tarif(masuk, keluar, jenis_kendaraan):
     rute_tol = {
-        ("kopo", "toha"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("kopo", "buahbatu"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("kopo", "cileunyi"): {"mobil": 6500, "truk": 13000, "bus": 9750},
-        ("toha", "buahbatu"): {"mobil": 2500, "truk": 5000, "bus": 3750},
-        ("toha", "cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("buahbatu", "cileunyi"): {"mobil": 5500, "truk": 11000, "bus": 8250},
-        ("kopo", "kopo"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("toha", "toha"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("buahbatu", "buahbatu"): {"mobil": 13000, "truk": 26000, "bus": 19500},
-        ("cileunyi", "cileunyi"): {"mobil": 13000, "truk": 26000, "bus": 19500}
+        ("baros","pasirkoja"): {"mobil": 4000, "truk": 9000, "bus": 6500},
+        ("baros","kopo"): {"mobil": 4000, "truk": 9000, "bus": 6500},
+        ("baros","toha"): {"mobil": 5500, "truk": 12000, "bus": 8500},
+        ("baros","buahbatu"): {"mobil": 5500, "truk": 12000, "bus": 8500},
+        ("baros","cileunyi"): {"mobil": 7500, "truk": 17500, "bus": 13000},
+        ("pasirkoja","kopo"):{"mobil": 2500, "truk": 6000, "bus": 4500},
+        ("pasirkoja","toha"): {"mobil": 4000, "truk": 9000, "bus": 6500},
+        ("pasirkoja","buahbatu"): {"mobil": 4000, "truk": 9000, "bus": 6500},
+        ("pasirkoja","cileunyi"): {"mobil": 7500, "truk": 17500, "bus": 13000},
+        ("kopo", "toha"): {"mobil": 2500, "truk": 6000, "bus": 4500},
+        ("kopo", "buahbatu"): {"mobil": 4000, "truk": 9000, "bus": 6500},
+        ("kopo", "cileunyi"): {"mobil": 6500, "truk": 15000, "bus": 8000},
+        ("toha", "buahbatu"): {"mobil": 2500, "truk": 6000, "bus": 4500},
+        ("toha", "cileunyi"): {"mobil": 5000, "truk": 12000, "bus": 8500},
+        ("buahbatu", "cileunyi"): {"mobil": 5000, "truk": 12000, "bus": 8500},
+        ("kopo", "kopo"): {"mobil": 15000, "truk": 35000, "bus": 26000},
+        ("toha", "toha"): {"mobil": 15000, "truk": 35000, "bus": 26000},
+        ("buahbatu", "buahbatu"): {"mobil": 15000, "truk": 35000, "bus": 26000},
+        ("cileunyi", "cileunyi"): {"mobil": 15000, "truk": 35000, "bus": 26000},
+        ("pasirkoja","pasirkoja"): {"mobil": 15000, "truk": 35000, "bus": 26000},
+        ("baros","baros"): {"mobil": 15000, "truk": 35000, "bus": 26000},
     }
     rute = (masuk, keluar)
     if rute in rute_tol:
@@ -104,7 +115,7 @@ def main():
         
         # kendaraan terpilih akan diproses di gerbang keluar
         if kendaraan_dipilih:
-            keluar = input("Masukkan gerbang keluar kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ")
+            keluar = input("Masukkan gerbang keluar kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ").lower()
             gerbang_keluar(kendaraan_dipilih, keluar)
         else:
             print("Plat nomor tidak ditemukan dalam daftar kendaraan.")
