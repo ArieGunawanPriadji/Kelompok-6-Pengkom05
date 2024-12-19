@@ -1,26 +1,9 @@
 import os
-import time 
+import time
+import cv2
 
-# fungsi "kendaraan" membuat dictionary berisi data kendaraan: plat nomor, jenis kendaraan, saldo awal, dan pintu masuk
-def kendaraan(plat_nomor, jenis_kendaraan, saldo=0, masuk=None):
-    return {
-        "plat_nomor": plat_nomor,
-        "jenis_kendaraan": jenis_kendaraan,
-        "saldo": saldo,
-        "masuk": masuk
-    }
-
-# fungsi "saldo_akhir" mengecek apakah saldo kendaraan mencukupi untuk membayar tarif tol.
-def saldo_akhir(kendaraan, tarif):
-    if kendaraan["saldo"] >= tarif:
-        kendaraan["saldo"] -= tarif
-        return True
-    else:
-        return False
-
-# fungsi "hitung_tarif" akan menghitung tarif tol yang perlu dibayar pengguna kendaraan
-def hitung_tarif(masuk, keluar, jenis_kendaraan):
-    rute_tol = {
+# Data rute dan tarif tol
+rute_tol = {
         ("baros","pasirkoja"): {"mobil": 4000, "truk": 9000, "bus": 6500},
         ("baros","kopo"): {"mobil": 4000, "truk": 9000, "bus": 6500},
         ("baros","toha"): {"mobil": 5500, "truk": 12000, "bus": 8500},
@@ -43,6 +26,18 @@ def hitung_tarif(masuk, keluar, jenis_kendaraan):
         ("pasirkoja","pasirkoja"): {"mobil": 15000, "truk": 35000, "bus": 26000},
         ("baros","baros"): {"mobil": 15000, "truk": 35000, "bus": 26000},
     }
+
+# Fungsi menampilkan tabel tarif tol berdasarkan gerbang masuk
+def tampilkan_tabel_tarif(masuk, jenis_kendaraan):
+    print(f"\nTarif untuk gerbang masuk {masuk} (jenis kendaraan: {jenis_kendaraan}):")
+    print(f"{'Gerbang Keluar':<15}{'Tarif':>10}")
+    print("-" * 25)
+    for (start, end), tarif in rute_tol.items():
+        if start == masuk or end == masuk:
+            print(f"{end if start == masuk else start:<15}{tarif[jenis_kendaraan]:>10}")
+
+# Fungsi menghitung tarif
+def hitung_tarif(masuk, keluar, jenis_kendaraan):
     rute = (masuk, keluar)
     if rute in rute_tol:
         return rute_tol[rute].get(jenis_kendaraan)
@@ -50,79 +45,59 @@ def hitung_tarif(masuk, keluar, jenis_kendaraan):
         rute = (keluar, masuk)
         return rute_tol.get(rute, {}).get(jenis_kendaraan)
 
-# fungsi "gerbang_keluar" dipakai ketika kendaraan keluar dari tol
-# fungsi ini memproses:
-# Menghitung tarif tol berdasarkan gerbang masuk, keluar, dan jenis kendaraan.
-# Memanggil saldo_akhir untuk mengecek dan memotong saldo jika mencukupi.
-# Jika saldo cukup, saldo akan dipotong, dan gerbang otomatis terbuka.
-# Jika saldo tidak mencukupi, pesan bahwa saldo tidak cukup akan ditampilkan, beserta jumlah tarif untuk pembayaran manual.
+# Fungsi gerbang keluar
 def gerbang_keluar(kendaraan, keluar):
     tarif_tol = hitung_tarif(kendaraan["masuk"], keluar, kendaraan["jenis_kendaraan"])
     if tarif_tol is None:
         print(f"Rute dari {kendaraan['masuk']} ke {keluar} tidak tersedia.")
         return False
-    if saldo_akhir(kendaraan, tarif_tol):
-        print(f"Saldo kendaraan {kendaraan['plat_nomor']} dipotong sebesar {tarif_tol}, rute yang dilalui {kendaraan['masuk']} - {keluar}. Sisa saldo: {kendaraan['saldo']}")
-        time.sleep(1)
+    if kendaraan["saldo"] >= tarif_tol:
+        kendaraan["saldo"] -= tarif_tol
+        print(f"Saldo kendaraan {kendaraan['plat_nomor']} dipotong sebesar {tarif_tol}. Sisa saldo: {kendaraan['saldo']}")
         print("Gerbang Terbuka")
         return True
     else:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(f"Kendaraan {kendaraan['plat_nomor']} tidak memiliki saldo yang cukup untuk melalui rute {kendaraan['masuk']} - {keluar}.")
-        time.sleep(1)
-        print(f"Silahkan lakukan pembayaran manual senilai {tarif_tol}")
-        time.sleep(1)
-        input("Tekan Enter jika pembayaran berhasil")
-        print("Pembayaran manual berhasil!")
-        print("Gerbang Terbuka")
+        print(f"Saldo tidak mencukupi. Silakan bayar manual sebesar {tarif_tol}.")
+        qris_image = cv2.imread("qris.jpg")
+        if qris_image is not None:
+            cv2.imshow("QRIS Pembayaran", qris_image)
+            print("QRIS ditampilkan. Silakan scan untuk melakukan pembayaran.")
+            print("Tekan tombol apa saja setelah pembayaran selesai.")
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            print("Pembayaran manual berhasil!")
+            print("Gerbang Terbuka")
         return False
 
-# Fungsi "tambah_kendaraan" meminta pengguna untuk memasukkan informasi kendaraan.
-def tambah_kendaraan():
-    plat_nomor = input("Masukkan Plat Nomor: ")
-    jenis_kendaraan = input("Masukkan jenis kendaraan (mobil, truk, bus): ").lower()
-    saldo = float(input("Masukkan saldo kendaraan: "))
-    masuk = input("Masukkan gerbang masuk kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ").lower()
-    return kendaraan(plat_nomor, jenis_kendaraan, saldo, masuk)
-
 def main():
-    # kendaraan_list adalah list untuk menyimpan data semua kendaraan yang ditambahkan.
-    kendaraan_list = []
+    # Database kendaraan
+    kendaraan_list = [
+        {"plat_nomor": "D1234ABC", "jenis_kendaraan": "mobil", "saldo": 0},
+        {"plat_nomor": "B5678DEF", "jenis_kendaraan": "truk", "saldo": 75000},
+        {"plat_nomor": "F91011GHI", "jenis_kendaraan": "bus", "saldo": 60000}
+    ]
 
-    # Menambahkan data kendaraan ke dalam sistem
-    while True:
-        tambah_lagi = input("Tambah kendaraan lain? (ya/tidak): ").strip().lower()
-        if tambah_lagi == 'ya':
-            kdr = tambah_kendaraan()
-            kendaraan_list.append(kdr)
-        else:
-            break
+    # Memilih kendaraan
+    print("Daftar kendaraan:")
+    for i, kdr in enumerate(kendaraan_list, 1):
+        print(f"{i}. Plat Nomor: {kdr['plat_nomor']}, Jenis: {kdr['jenis_kendaraan']}, Saldo: {kdr['saldo']}")
 
-    # Memilih kendaraan dengan plat nomor untuk diproses saat kendaraan hendak keluar tol
-    while True:
-        print("\nDaftar kendaraan:")
-        for kdr in kendaraan_list:
-            print(f"Plat Nomor: {kdr['plat_nomor']}, Jenis: {kdr['jenis_kendaraan']}, Saldo: {kdr['saldo']}, Gerbang Masuk: {kdr['masuk']}")
+    pilihan = int(input("Pilih kendaraan (masukkan nomor): ")) - 1
+    kendaraan_dipilih = kendaraan_list[pilihan]
 
-        plat_nomor = input("Masukkan plat nomor kendaraan yang ingin diproses: ").strip()
-        
-        # Mencari kendaraan berdasarkan plat nomor
-        kendaraan_dipilih = None
-        for k in kendaraan_list:
-            if k["plat_nomor"] == plat_nomor:
-                kendaraan_dipilih = k
-                break
-        
-        # kendaraan terpilih akan diproses di gerbang keluar
-        if kendaraan_dipilih:
-            keluar = input("Masukkan gerbang keluar kendaraan (Kopo, Toha, Buahbatu, Cileunyi): ").lower()
-            gerbang_keluar(kendaraan_dipilih, keluar)
-        else:
-            print("Plat nomor tidak ditemukan dalam daftar kendaraan.")
+    # Memilih gerbang masuk
+    gerbang_masuk = input("Masukkan gerbang masuk (Kopo, Toha, Buahbatu, Cileunyi, Pasir Koja, Baros): ").lower()
+    kendaraan_dipilih["masuk"] = gerbang_masuk
 
-        lanjut = input("Apakah Anda ingin memproses kendaraan lain? (ya/tidak): ").strip().lower()
-        if lanjut != 'ya':
-            break
+    # Menampilkan tabel tarif
+    tampilkan_tabel_tarif(gerbang_masuk, kendaraan_dipilih["jenis_kendaraan"])
+    print("Gerbang terbuka")
+    time.sleep(10)
+    os.system("cls" if os.name == "nt" else "clear")
+
+    # Memilih gerbang keluar
+    gerbang_keluar_user = input("Masukkan gerbang keluar (Kopo, Toha, Buahbatu, Cileunyi, Pasir Koja, Baros): ").strip().lower().replace(" ", "")
+    gerbang_keluar(kendaraan_dipilih, gerbang_keluar_user)
 
 if __name__ == "__main__":
     main()
